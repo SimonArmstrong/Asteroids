@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+
+	<body>
+		<div align="center"><canvas id="gameCanvas" width ="1280" height="720"></canvas></div>
+		<div align="center">
+			<h2>Highest Score</h2></br>
+			<h1 id="hiscores">5000</h1>
+			<a href="help.html" target="_blank">How To Play</a>
+		</div>
+		
+		<div align="center"><button id="insertCredits">>Insert Credits<</button></div>
+		<script id="main" src="main.js"></script>
+		
+		<div align ="center"><input type="checkbox" id="myCheck">Show AABB Collision</input></div>
+		<div align ="center"><input type="checkbox" id="soundCheck">Sounds</input></div>
+		<div align ="center"><input type="checkbox" id="musicCheck">Music</input></div>
+		<audio id="audioShoot">
+			<source src="Sounds/shoot.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="audioKillAsteroid">
+			<source src="Sounds/AsteroidDie.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="audioHitAsteroid">
+			<source src="Sounds/AsteroidHit.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="audioDie">
+			<source src="Sounds/playerDie.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="audioPause">
+			<source src="Sounds/pause.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="audioMusic">
+			<source src="Sounds/musicMain.mp3" type="audio/mpeg">
+		</audio>
+	</body>
+</html>
