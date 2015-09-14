@@ -21,39 +21,31 @@ function WaitForSeconds(seconds, deltaTime)
 	return seconds -= deltaTime;
 }
 
-var canvas 	= document.getElementById("gameCanvas");
-var context = canvas.getContext("2d");
-var shooting = false;
-var playerFireBomb = false;
-var shootTimer = 0;
-var bombTimer = 0;
-var width 	= canvas.width;
-var height 	= canvas.height;
-var asteroidDead = false;
-var isPaused = false;
-var asteroidsToSpawn = 10;
-var myCheck = document.getElementById("myCheck");
-var soundCheck = document.getElementById("soundCheck");
-var musicCheck = document.getElementById("musicCheck");
-var showCollision = false;
-var playerDieSound = document.getElementById("audioDie");
-var asteroidDieSound = document.getElementById("audioKillAsteroid");
-var shootSound = document.getElementById("audioShoot");
-var asteroidHitSound = document.getElementById("audioHitAsteroid");
-var hiscore = document.getElementById("hiscores").innerHTML;
-var screenWait = 3;
-var insertCredits = document.getElementById("insertCredits");
-var credits = 1;
-var spawnPU = false;
+var canvas 		= document.getElementById("gameCanvas");	//Gets the canvas element from the document
+var context 		= canvas.getContext("2d");			//Gets the 2D context attached to our canvas
+var shooting 		= false;					//Init player not shooting
+var playerFireBomb 	= false;					//Init player not firing  bomb
+var shootTimer 		= 0;						//Init shooting cooldown timer
+var bombTimer 		= 0;						//Init bomb shooting cooldown timer
+var width 		= canvas.width;					//Gets the width of our canvas
+var height 		= canvas.height;				//Gets the height of our canvas
+var asteroidDead 	= false;					//
+var isPaused 		= false;					//Init game not paused
+var asteroidsToSpawn 	= 10;						//Init amount of asteroids to create
+var myCheck 		= document.getElementById("myCheck");		//Gets a check element from the document
+var soundCheck 		= document.getElementById("soundCheck");	//Gets a check element from the document
+var musicCheck 		= document.getElementById("musicCheck");	//Gets a check element from the document
+var showCollision 	= false;					//Init don't show collision boxes
+var playerDieSound 	= document.getElementById("audioDie");		//Gets an audio element from the document
+var asteroidDieSound 	= document.getElementById("audioKillAsteroid"); //Gets an audio element from the document
+var shootSound 		= document.getElementById("audioShoot");	//Gets an audio element from the document
+var asteroidHitSound 	= document.getElementById("audioHitAsteroid");	//Gets an audio element from the document
+var hiscore 		= document.getElementById("hiscores").innerHTML;//Gets a paragraph element from the document
+var screenWait 		= 3;						//Init splash screen timer
+var insertCredits 	= document.getElementById("insertCredits");	//Gets a button element from the document
+var credits 		= 1;						//Init current player's credits
+var spawnPU 		= false;					//
 
-/*
-var player_sprite = document.createElement("img");
-player_sprite.src = "AsteroidsArt/myship2.png";
-
-var player_x_position = width / 2;
-var player_y_position = height / 2;
-var player_rotation	  = 0;
-*/
 var player = {
 	image : document.createElement("img"),
 	x : canvas.width / 2,
@@ -74,6 +66,7 @@ var player = {
 };
 function addCredits()
 {
+	//Adds credits to the game. (Adds three more tries)
 	context.fillText("Credits Added", 50, canvas.height - 50);
 	player.lives += 3;
 }
@@ -90,7 +83,7 @@ function createSlider(x, y, id)
 	};
 }
 
-insertCredits.addEventListener('mousedown', addCredits);
+insertCredits.addEventListener('mousedown', addCredits);	//Event listener for pressing the button element
 
 var livesSprite = document.createElement("img");
 livesSprite.src = "AsteroidsArt/livesSprite.png";
@@ -178,12 +171,8 @@ function spawnPowerUp(type, x, y)
 
 var bullets = [];
 
-
 player.image.src = "AsteroidsArt/myship2.png";
-//bullet.image.src = "AsteroidsArt/green_bullet.png";
 
-//var backgroundImage = document.createElement("img");
-//backgroundImage.src = "AsteroidsArt/bg.png";
 var gameoverImage = document.createElement("img");
 gameoverImage.src = "AsteroidsArt/gameover.png";
 
@@ -215,8 +204,9 @@ var turningRight = false;
 var konamiCode = [UP_ARROW, UP_ARROW, DOWN_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, LEFT_ARROW, RIGHT_ARROW, A_KEY];
 
 function intersects(minx1, miny1, maxx1, maxy1,
-					minx2, miny2, maxx2, maxy2)
-{
+		minx2, miny2, maxx2, maxy2)
+{	
+	//Returns true if the given pixel parameters create intersections
 	var result = true;
 	if(maxx1 < minx2 || maxx2 < minx1 || maxy1 < miny2 || maxy2 < miny1)
 	{
@@ -266,7 +256,6 @@ function OnKeyDown(event)
 		if(event.keyCode === SPACE && shootTimer <= 0)
 		{
 			shooting = true;
-			//playerShoot();
 		}
 		if(event.keyCode === 27)
 		{
@@ -339,6 +328,7 @@ bullet_image.src = "AsteroidsArt/green_bullet.png";
 
 function playerShoot()
 {
+	//Create bullet
 	var bullet = {
 		image : bullet_image,
 		x : player.x,
@@ -368,13 +358,16 @@ function playerShoot()
 	
 	//set the bullet to be not dead
 	bullet.isDead = false;
+	
+	//Add the created bullet to our array
 	bullets.push(bullet);
 }
 
 function playerBomb(deltaTime)
 {
 	for(var i = 0; i < 36; i++)
-	{
+	{	
+		//create a new bullet i amount of times
 		var bullet = {
 			image : bullet_image,
 			x : player.x,
@@ -398,6 +391,7 @@ function playerBomb(deltaTime)
 		bullet.x = player.x;
 		bullet.y = player.y;
 		
+		//Add i amount of bullets to our array
 		bullets.push(bullet);
 	}
 
@@ -408,6 +402,8 @@ function playerBomb(deltaTime)
 	
 	//set the bullet to be not dead
 	bullet.isDead = false;
+	
+	//Subtract bomb ammo
 	player.bombs--;
 }
 
@@ -444,7 +440,7 @@ function dropLife(inputAsteroid, x, y, deltaTime)
 	}
 }
 
-
+//**********Game States***********//
 var STATE_SPLASH = 0;
 var STATE_GAME = 1;
 var STATE_GAMEOVER = 2;
@@ -455,12 +451,12 @@ var currentWave = 1;
 var gameState = STATE_SPLASH;
 var asteroidsAmount = 10;
 
-function Run()
+function Run()	//Main. Called 60 times per second
 {
 	var deltaTime = getDeltaTime();
 	canvas.width = canvas.width;
 	
-	switch(gameState)
+	switch(gameState)	//Check and updates our game state
 	{		
 		case STATE_SPLASH:
 		splashStateUpdate(deltaTime, asteroidsAmount);
@@ -481,7 +477,8 @@ function Run()
 }	
 
 function paused()
-{
+{	
+	//Plays the pause SFX
 	if(document.getElementById("soundCheck").checked === true)
 	{
 		document.getElementById("audioPause").pause();
@@ -496,16 +493,18 @@ function paused()
 var splashTimer = 3;
 var asteroidsLeft = 10;
 
-function splashStateUpdate(deltaTime, asteroidCount)
+function splashStateUpdate(deltaTime, asteroidCount)	//Determines information to be displayed at the splash screen
 {
+	//Begins countdown
 	splashTimer -= deltaTime;
 	var previousAsteroidsToSpawn = asteroidsLeft;
 	
 	if(splashTimer < 0)
-	{
+	{	
+		//After the countdown is done, set the game state back to the main game
 		gameState = STATE_GAME;
 		player.lives--;
-		//asteroidCount = 0;
+
 		if(document.getElementById("musicCheck").checked === true)
 		{
 			document.getElementById("audioMusic").pause();
@@ -533,9 +532,10 @@ function splashStateUpdate(deltaTime, asteroidCount)
 			
 	for(var a = 0; a < player.lives; a++)
 	{
+		//Draws life information to the HUD.
 		context.drawImage(life.image, 50 + a * 28, 130);
 	}
-	
+	//Draws information to the HUD.
 	context.fillText("SCORE: " + player.points.toString(), 50, 50);
 	context.fillText("ASTEROIDS: " + asteroidCount.toString(), 50, 75);
 	context.fillText("GAME START ", 50, 100);
@@ -559,7 +559,6 @@ function respawnPowerUps(toSpawn)
 	
 }
 
-
 respawnAsteroids(10);
 
 var showTenPoints = 2;
@@ -577,14 +576,12 @@ function gameStateUpdate(deltaTime)
 {	
 	showHundredPoints -= deltaTime;
 	showTenPoints -= deltaTime;
-
 	if(myCheck)
 	{
 		showCollision = true;
 	}
 	
 	splashTimer = 2;
-
 	if(!isPaused)
 	{	
 	
@@ -621,14 +618,6 @@ function gameStateUpdate(deltaTime)
 		{
 			player.angularVelocity = player.turnSpeed;
 		}
-
-		//context.fillStyle = "#000";
-		//context.fillRect(0, 0, width, height);
-		//context.drawImage(backgroundImage, 0, 0);
-		
-		//Draw the rectangle outline every frame
-		//context.rect(0, 0, width, height);
-		//context.stroke();
 		
 		//update the player position and rotation
 		var s = Math.sin(player.rotation);
@@ -660,24 +649,15 @@ function gameStateUpdate(deltaTime)
 				context.drawImage(asteroids[i].image, asteroids[i].x - asteroids[i].width / 2, asteroids[i].y - asteroids[i].height / 2);
 				if(player.isDead === false)
 				{
-					var playerIntersectingAsteroid = intersects(player.x - player.width / 2, player.y - player.height / 2,
-																player.x + player.width / 2, player.y + player.height / 2,
-																asteroids[i].x - asteroids[i].width / 2, asteroids[i].y - asteroids[i].height / 2,
-																asteroids[i].x + asteroids[i].width / 2, asteroids[i].y + asteroids[i].height / 2);
+					var playerIntersectingAsteroid = intersects (
+						player.x - player.width / 2, player.y - player.height / 2,
+						player.x + player.width / 2, player.y + player.height / 2,
+						asteroids[i].x - asteroids[i].width / 2, asteroids[i].y - asteroids[i].height / 2,
+						asteroids[i].x + asteroids[i].width / 2, asteroids[i].y + asteroids[i].height / 2
+					);
+					
 					if(playerIntersectingAsteroid === true)
 					{
-						//player.isDead = true;
-						/*
-						for(var b = 0; b < asteroids.length; b++)
-						{
-							asteroids[b].isDead = true;
-							player.x = canvas.width / 2;
-							player.y = canvas.height / 2;
-							player.rotation = 0;
-						}
-						*/
-						//asteroidAmount = asteroids.length;
-						//respawnAsteroids(asteroids.length);
 						asteroids[i].isDead = true;
 
 						for(var b = 0; b < asteroids.length; b++)
@@ -700,10 +680,6 @@ function gameStateUpdate(deltaTime)
 							document.getElementById("audioDie").play();
 						}
 
- 
-
-						//document.getElementById("audioDie").play;
-
 						if(document.getElementById("audioDie").ended === true)
 						{
 							document.getElementById("audioDie").pause();
@@ -723,7 +699,6 @@ function gameStateUpdate(deltaTime)
 						{		
 						
 							player.points += 10;
-							//console.log(player.points);
 							addTenPoints = true;
 							bullets[j].isDead = true;
 							asteroids[i].size--;
@@ -766,13 +741,6 @@ function gameStateUpdate(deltaTime)
 									document.getElementById("audioHitAsteroid").load();
 									document.getElementById("audioHitAsteroid").play();
 								}	
-								/*
-								if(asteroidsLeft === 0)
-								{
-									currentWave++;
-									gameState = STATE_SPLASH;
-								}
-								*/
 							}
 							
 							if(asteroids[i].size >= 2)
@@ -789,16 +757,12 @@ function gameStateUpdate(deltaTime)
 									document.getElementById("audioHitAsteroid").load();
 									document.getElementById("audioHitAsteroid").play();
 								}	
-								//spawnAsteroid(2, asteroids[i].x, asteroids[i].y);
-								//console.log("large Asteroid hit");
 							}
 							else if(asteroids[i].size >= 1)
 							{
 								asteroids[i].image.src = "AsteroidsArt/asteroid_mid_lowres.png";
 								asteroids[i].width = 34;
 								asteroids[i].height = 34;
-								//document.getElementById("audioHitAsteroid").play();
-								//spawnAsteroid(1.5, asteroids[i].x, asteroids[i].y);
 								spawnAsteroid(1.5, asteroids[i].x, asteroids[i].y);
 							}
 							else
@@ -816,13 +780,11 @@ function gameStateUpdate(deltaTime)
 									document.getElementById("audioHitAsteroid").play();
 								}	
 							}
-							
 						}
 					}
 					else
 					{
 						bullets.splice(j, 1);
-						
 						break;
 					}
 				}
@@ -831,7 +793,6 @@ function gameStateUpdate(deltaTime)
 			{
 				dropLife(asteroids[i], asteroids[i].x, asteroids[i].y, deltaTime);
 			}
-			
 			
 			if(asteroids[i].x > canvas.width + asteroids[i].width / 2)
 			{
@@ -856,7 +817,6 @@ function gameStateUpdate(deltaTime)
 			asteroids[i].speed += 3 / deltaTime;
 			
 		}
-		
 		
 		for(var x = 0; x < powerUps.length; x++)
 		{
@@ -887,7 +847,6 @@ function gameStateUpdate(deltaTime)
 				{
 					powerUps[x].y = canvas.height + powerUps[x].height / 2;
 				}
-				
 			}
 		}
 		
@@ -917,14 +876,9 @@ function gameStateUpdate(deltaTime)
 				bullets[j].x += bullets[j].velocityX * deltaTime;
 				bullets[j].y += bullets[j].velocityY * deltaTime;
 				context.drawImage(bullets[j].image, bullets[j].x - 2, bullets[j].y - 2);
-				
-				
 				if(bullets[j].x > canvas.width || bullets[j].x < 0 || bullets[j].y > canvas.height || bullets[j].y < 0)
 				{
-					//bullets[j].isDead = true;
-					
 					bullets.splice(j, 1);
-				
 					break;
 				}
 			}
@@ -932,20 +886,11 @@ function gameStateUpdate(deltaTime)
 
 		shootTimer -= deltaTime;
 		bombTimer -= deltaTime;
-		//var pointsOverHi = player.score - hiscore;
 		if(player.points >= hiscore)
 		{
 			hiscore = player.points + 10;
 			document.getElementById("hiscores").innerHTML = hiscore;
 		}
-		/*
-		if(player.points >= 1000)
-		{
-			spawnPU = true;
-			respawnPowerUps(1);	
-			spawnPU = false;
-		}
-		*/
 		
 		if(playerFireBomb && bombTimer < 0)
 		{
@@ -978,8 +923,6 @@ function gameStateUpdate(deltaTime)
 			}
 			playerShoot();
 		}
-		
-		//document.write("Player X Direction: " + xDir.toString());
 		if(player.isDead === false)
 		{
 			restart = false;
@@ -1075,28 +1018,6 @@ function gameStateUpdate(deltaTime)
 			}
 		}
 		//GUI score vanishes when player dies
-		
-	/*	
-		playerRightEdge = player.x + player.width;
-		playerLeftEdge = player.x;
-		playerTopEdge = player.y;
-		playerBottomEdge = player.y + player.width;
-		asteroidRightEdge = asteroid.x + asteroid.width;
-		asteroidLeftEdge = asteroid.x;
-		asteroidTopEdge = asteroid.y;
-		asteroidBottomEdge = asteroid.y + asteroid.width;
-		
-		if(playerRightEdge < asteroidLeftEdge || playerLeftEdge < asteroidRightEdge || playerTopEdge < asteroidBottomEdge || playerBottomEdge < asteroidTopEdge)
-		{
-			//not colliding
-			asteroidDead = false;
-		}
-		else
-		{
-			asteroidDead = true;
-			console.log("Asteroid hit!");
-		}
-	*/
 	}
 	else
 	{
@@ -1116,35 +1037,6 @@ function gameStateUpdate(deltaTime)
 			}
 		}
 		context.fillText("PAUSED", 50, 50);
-		
-
-	/*	
-		for(var i = 0; i < asteroids.length; i++){
-			asteroids[i].image.src = "AsteroidsArt/green_bullet.png";
-			asteroids[i].x += asteroids[i].velocityX * deltaTime;
-			asteroids[i].y += asteroids[i].velocityY * deltaTime;
-			context.drawImage(asteroids[i].image, asteroids[i].x - asteroids[i].width / 2, asteroids[i].y - asteroids[i].height / 2);
-			if(asteroids[i].x > canvas.width + asteroids[i].width / 2)
-			{
-				asteroids[i].x = -(asteroids[i].width / 2);
-			}
-			
-			if(asteroids[i].x < -(asteroids[i].width / 2))
-			{
-				asteroids[i].x = canvas.width + asteroids[i].width / 2;
-			}
-			
-			if(asteroids[i].y > canvas.height + asteroids[i].height / 2)
-			{
-				asteroids[i].y = -(asteroids[i].height / 2);
-			}
-				
-			if(asteroids[i].y < -(asteroids[i].height / 2))
-			{
-				asteroids[i].y = canvas.height + asteroids[i].height / 2;
-			}
-		}
-	*/
 	}
 }
 
